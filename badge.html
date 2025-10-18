@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Badge • Arquiteto Cloud</title>
+    <meta name="description" content="Badge personalizada de Arquiteto Cloud" />
+    <style>
+      :root {
+        --bg: #0b1220;
+        --panel: #0f172a;
+        --panel-2: #111827;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --primary: #22c55e;
+        --accent: #38bdf8;
+        --ring: #22c55e55;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        height: 100%;
+        margin: 0;
+        color-scheme: dark;
+        background: radial-gradient(1200px 600px at 10% 0%, #0e1b31 0%, var(--bg) 55%) no-repeat, var(--bg);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+        color: var(--text);
+      }
+      .badge {
+        max-width: 720px;
+        margin: 24px auto;
+        padding: 20px;
+        background: linear-gradient(180deg, var(--panel), var(--panel-2));
+        border: 1px solid #1f2937;
+        border-radius: 16px;
+        position: relative;
+        box-shadow: 0 0 0 1px #000 inset, 0 10px 30px rgba(0,0,0,.35), 0 0 60px 10px rgba(56,189,248,.08);
+      }
+      .badge__ribbon {
+        position: absolute; inset: -1px -1px auto -1px; height: 8px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-top-left-radius: 16px; border-top-right-radius: 16px;
+      }
+      .badge__grid {
+        display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: center;
+      }
+      .badge__logo {
+        width: 96px; height: 96px; border-radius: 14px; background: #0b1324;
+        border: 1px solid #1f2937; display: grid; place-items: center; overflow: hidden;
+        box-shadow: 0 0 0 6px #0b1324 inset, 0 0 0 1px #000 inset;
+      }
+      .badge__logo img {
+        width: 100%; height: 100%;
+        object-fit: contain;
+        display: block;
+        background: #0b1324;
+      }
+      .badge__content { min-width: 0; }
+      .title {
+        margin: 0 0 4px 0; font-size: 1.5rem; font-weight: 800; letter-spacing: .2px;
+        display: inline-flex; align-items: center; gap: .5rem; color: #f8fafc;
+      }
+      .title .dot {
+        width: .6rem; height: .6rem; border-radius: 999px;
+        background: radial-gradient(circle at 30% 30%, #fff, var(--primary) 40%, #16a34a 100%);
+        box-shadow: 0 0 0 6px var(--ring);
+      }
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.975rem;
+      }
+      .name-block { margin-top: 14px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+      .name-input {
+        width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #243244;
+        background: #0b1324; color: var(--text); font-size: 1rem; outline: none;
+        transition: border-color .2s, box-shadow .2s;
+      }
+      .name-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--ring); }
+      .badge__chip {
+        padding: 10px 14px; border-radius: 999px; background: rgba(34,197,94,.12);
+        color: #bbf7d0; border: 1px solid rgba(34,197,94,.35); font-weight: 600; font-size: .9rem;
+        letter-spacing: .25px; display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap;
+      }
+      .preview {
+        margin-top: 18px; padding: 16px; border-radius: 12px; border: 1px dashed #223046;
+        background: rgba(56,189,248,.06); color: #e6f7ff; font-size: 0.98rem;
+      }
+      @media (max-width: 520px) {
+        .badge { margin: 12px; padding: 16px; }
+        .badge__grid { grid-template-columns: 72px 1fr; gap: 12px; }
+        .badge__logo { width: 72px; height: 72px; border-radius: 12px; }
+        .title { font-size: 1.25rem; }
+        .name-block { grid-template-columns: 1fr; }
+      }
+      .buttons { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+      button {
+        appearance: none; border: 1px solid #1f2a3b;
+        background: linear-gradient(180deg, #122035, #0f1a2c);
+        color: #e5e7eb; padding: 10px 14px; border-radius: 10px; cursor: pointer;
+        font-weight: 600; transition: transform .12s ease, box-shadow .12s ease, border-color .2s;
+      }
+      button:hover { transform: translateY(-1px); }
+      button:active { transform: translateY(0); }
+      .primary { border-color: #14532d; background: linear-gradient(180deg, #0f2e1e, #0b2418); color: #d1fae5; }
+      .hint {
+        margin-top: 6px;
+        color: #a5b4fc;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="badge" role="group" aria-label="Badge Arquiteto Cloud">
+      <span class="badge__ribbon" aria-hidden="true"></span>
+
+      <div class="badge__grid">
+        <div class="badge__logo" aria-label="Logotipo">
+          <img src="logo-start.png" alt="Startrainings Consultoria & Treinamentos">
+        </div>
+
+        <div class="badge__content">
+          <h1 class="title">
+            <span class="dot" aria-hidden="true"></span>
+            Arquiteto Cloud
+          </h1>
+          <p class="subtitle">Adicione sua imagem no campo em branco</p>
+
+          <div class="name-block">
+            <input id="aluno" class="name-input" type="text" placeholder="Digite seu nome" aria-label="Nome do aluno">
+            <span class="badge__chip" title="Trilha">• Cloud •</span>
+          </div>
+
+          <div class="buttons">
+            <button class="primary" type="button" id="aplicar">Aplicar na badge</button>
+            <button type="button" id="baixar">Baixar PNG</button>
+          </div>
+
+          <div class="preview" id="previewText">
+            Pré-visualização: Arquiteto Cloud — <strong id="nomePreview">Seu Nome</strong>
+          </div>
+          <div class="hint">Dica: substitua o arquivo logo-start.png pela sua imagem para trocar o logotipo.</div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const input = document.getElementById('aluno');
+      const nomePreview = document.getElementById('nomePreview');
+      const aplicar = document.getElementById('aplicar');
+      const baixar = document.getElementById('baixar');
+
+      input.addEventListener('input', () => {
+        nomePreview.textContent = input.value.trim() || 'Seu Nome';
+      });
+
+      aplicar.addEventListener('click', () => {
+        alert('Nome aplicado na badge: ' + (input.value.trim() || 'Seu Nome'));
+      });
+
+      async function downloadPng() {
+        const node = document.querySelector('.badge');
+        const rect = node.getBoundingClientRect();
+        const scale = window.devicePixelRatio || 2;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(rect.width * scale);
+        canvas.height = Math.round(rect.height * scale);
+        const ctx = canvas.getContext('2d');
+
+        const serializer = new XMLSerializer();
+        const clone = node.cloneNode(true);
+        clone.style.boxShadow = 'none';
+        clone.querySelectorAll('*').forEach(el => {
+          el.style.boxShadow = 'none';
+          el.style.animation = 'none';
+          el.style.transition = 'none';
+        });
+
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(clone);
+        const html = serializer.serializeToString(wrapper);
+
+        const svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+            <foreignObject x="0" y="0" width="100%" height="100%">
+              <div xmlns="http://www.w3.org/1999/xhtml" style="transform: scale(${scale}); transform-origin: 0 0;">
+                ${html}
+              </div>
+            </foreignObject>
+          </svg>
+        `;
+        const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          const link = document.createElement('a');
+          link.download = 'badge-arquiteto-cloud.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        };
+        img.src = url;
+      }
+      baixar.addEventListener('click', downloadPng);
+    </script>
+  </body>
+</html>
