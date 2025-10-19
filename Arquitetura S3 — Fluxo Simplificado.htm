@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)file:///C:/Users/rique/Downloads/diagrama.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arquitetura S3 — Fluxo Simplificado</title>
+<style>
+  :root{
+    --bg:#0f1222; --panel:#11182b; --ink:#eef3ff; --muted:#a8b0c6; --stroke:#24304b;
+    --c-user:#3ec9ff; --c-endpoint:#ffd166; --c-s3:#7ee081; --c-obj:#f4749a; --c-pol:#a58cf6; --c-admin:#ff955c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0f1222 0%,#0c1020 100%);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial}
+  .wrap{max-width:1024px;margin:22px auto;padding:0 14px}
+  h1{font-size:clamp(20px,2.6vw,28px);margin:0 0 6px}
+  .subtitle{color:var(--muted);margin-bottom:14px}
+
+  .board{position:relative;background:#0f1426;border:1px solid var(--stroke);border-radius:14px;padding:18px;overflow:hidden}
+  .lane{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;align-items:stretch;margin-bottom:12px}
+  .lane:last-child{margin-bottom:0}
+
+  .tag{font-size:12px;color:#9fb1d6;margin:6px 0 2px}
+
+  .card{background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:12px;min-height:70px}
+  .title{margin:0 0 6px;font-weight:700}
+  .desc{color:var(--muted);font-size:13px;margin:0}
+
+  .u{border-left:4px solid var(--c-user)}
+  .ep{border-left:4px solid var(--c-endpoint)}
+  .s3{border-left:4px solid var(--c-s3)}
+  .obj{border-left:4px solid var(--c-obj)}
+  .pol{border-left:4px solid var(--c-pol)}
+  .adm{border-left:4px solid var(--c-admin)}
+
+  svg.wires{position:absolute;inset:0;pointer-events:none}
+  .wire{stroke:#7aa0ff50;stroke-width:2;fill:none;marker-end:url(#arr)}
+  .wire.user{stroke:var(--c-user)}
+  .wire.ep{stroke:var(--c-endpoint)}
+  .wire.obj{stroke:var(--c-obj)}
+  .wire.pol{stroke:var(--c-pol)}
+  .wire.adm{stroke:var(--c-admin)}
+  .lbl{fill:#e6eeff;font-size:12px;paint-order:stroke;stroke:#0f1222;stroke-width:2}
+
+  .note{margin-top:12px;border:1px dashed var(--stroke);border-radius:10px;padding:10px 12px;color:var(--ink);background:rgba(255,255,255,.04)}
+  code{background:rgba(255,255,255,.08);padding:.15em .35em;border-radius:6px}
+
+  /* Responsivo: em telas estreitas, os blocos empilham, e as linhas são recalculadas via JS */
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Arquitetura — Site estático no Amazon S3</h1>
+  <div class="subtitle">Fluxo simplificado com setas retas e camadas.</div>
+
+  <div class="board" id="board">
+    <!-- Camada 1: Cliente e Admin -->
+    <div class="lane" id="lane1">
+      <div class="col tag" style="grid-column:1 / 13">Camada 1 — Atores</div>
+      <div id="user" class="card u" style="grid-column:1 / 4">
+        <h3 class="title">Usuário / Navegador</h3>
+        <p class="desc">Acessa a URL pública do site.</p>
+      </div>
+      <div id="admin" class="card adm" style="grid-column:10 / 13">
+        <h3 class="title">Admin / Aluno</h3>
+        <p class="desc">Faz upload de arquivos.</p>
+      </div>
+    </div>
+
+    <!-- Camada 2: Endpoint -->
+    <div class="lane" id="lane2">
+      <div class="col tag" style="grid-column:1 / 13">Camada 2 — Endpoint do Site Estático</div>
+      <div id="endpoint" class="card ep" style="grid-column:4 / 10">
+        <h3 class="title">Endpoint do Site Estático (S3)</h3>
+        <p class="desc">URL em Properties → Static website hosting.</p>
+      </div>
+    </div>
+
+    <!-- Camada 3: Bucket, Objetos e Política -->
+    <div class="lane" id="lane3">
+      <div class="col tag" style="grid-column:1 / 13">Camada 3 — S3</div>
+      <div id="bucket" class="card s3" style="grid-column:2 / 6">
+        <h3 class="title">Bucket S3 (Static Website Hosting)</h3>
+        <p class="desc">Serve conteúdo estático.</p>
+      </div>
+      <div id="objects" class="card obj" style="grid-column:6 / 10">
+        <h3 class="title">Objetos</h3>
+        <p class="desc"><code>index.html</code>, imagens e assets.</p>
+      </div>
+      <div id="policy" class="card pol" style="grid-column:10 / 12">
+        <h3 class="title">Bucket Policy</h3>
+        <p class="desc"><code>s3:GetObject</code> público (somente leitura).</p>
+      </div>
+    </div>
+
+    <!-- Linhas -->
+    <svg class="wires" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+        </marker>
+      </defs>
+      <path id="w-user-ep" class="wire user" d="M 134.05643323115618,132.4672699916912 L 134.05643323115618,157.31176034672478 L 500.00785978149815,157.31176034672478 L 500.00785978149815,182.15625070175832"></path>
+      <text id="l-user-ep" class="lbl" x="317.0321465063272" y="151.31176034672478">HTTP/HTTPS</text>
+
+      <path id="w-ep-bucket" class="wire ep" d="M 500.00785978149815,258.89829556937866 L 500.00785978149815,283.74278592441226 L 256.0323822997721,283.74278592441226 L 256.0323822997721,308.5872762794458"></path>
+      <text id="l-ep-bucket" class="lbl" x="378.0201210406351" y="277.74278592441226">Resolve objeto</text>
+
+      <path id="w-bucket-objects" class="wire obj" d="M 412.6385286489036,366.4188991938201 L 418.6748408394247,366.4188991938201 L 418.6748408394247,366.4188991938201 L 424.71115302994576,366.4188991938201"></path>
+      <text id="l-bucket-objects" class="lbl" x="418.6748408394247" y="356.4188991938201">index.html</text>
+
+      <path id="w-policy-bucket" class="wire pol" d="M 750.0117896722472,366.4188991938201 L 581.3251591605754,366.4188991938201 L 581.3251591605754,366.4188991938201 L 412.6385286489036,366.4188991938201" stroke-dasharray="8 6"></path>
+      <text id="l-policy-bucket" class="lbl" x="581.3251591605754" y="356.4188991938201">Permissão s3:GetObject</text>
+
+      <path id="w-admin-bucket" class="wire adm" d="M 750.0117896722472,94.09624755788104 L 581.3251591605754,94.09624755788104 L 581.3251591605754,366.4188991938201 L 412.6385286489036,366.4188991938201"></path>
+      <text id="l-admin-bucket" class="lbl" x="581.3251591605754" y="220.25757337585057">Upload</text>
+    </svg>
+  </div>
+
+  <div class="note">
+    Dicas:
+    <ul>
+      <li>Defina <strong>Index document</strong> como <code>index.html</code>.</li>
+      <li>Garanta leitura pública apenas para os objetos (política de bucket com <code>s3:GetObject</code>).</li>
+      <li>Use o endpoint exibido em <em>Properties → Static website hosting</em>.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  // Linhas ortogonais (L) com rótulos: sem cruzamentos
+  function center(rect){ return { x: rect.left + rect.width/2, y: rect.top + rect.height/2 }; }
+  function edge(rect, side){
+    switch(side){
+      case 'top':    return { x: rect.left + rect.width/2, y: rect.top };
+      case 'bottom': return { x: rect.left + rect.width/2, y: rect.bottom };
+      case 'left':   return { x: rect.left, y: rect.top + rect.height/2 };
+      case 'right':  return { x: rect.right, y: rect.top + rect.height/2 };
+    }
+  }
+  function toSVG(pt, svg){
+    const m = svg.getScreenCTM().inverse();
+    return new DOMPoint(pt.x, pt.y).matrixTransform(m);
+  }
+  // Gera um caminho ortogonal: sai do ponto A, desce/sube até yMid, depois vai até B
+  function orthoPath(a, b, bias='vh'){ // vh = vertical depois horizontal
+    if(bias === 'vh'){
+      const yMid = (a.y + b.y)/2;
+      return `M ${a.x},${a.y} L ${a.x},${yMid} L ${b.x},${yMid} L ${b.x},${b.y}`;
+    }else{
+      const xMid = (a.x + b.x)/2;
+      return `M ${a.x},${a.y} L ${xMid},${a.y} L ${xMid},${b.y} L ${b.x},${b.y}`;
+    }
+  }
+  function midLabelPath(a,b){
+    return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 - 6 };
+  }
+
+  function draw(){
+    const svg = document.querySelector('svg.wires');
+    const getRect = id => document.getElementById(id).getBoundingClientRect();
+
+    const rUser = getRect('user');
+    const rEP = getRect('endpoint');
+    const rBucket = getRect('bucket');
+    const rObjects = getRect('objects');
+    const rPolicy = getRect('policy');
+    const rAdmin = getRect('admin');
+
+    // user -> endpoint (vertical)
+    let a = toSVG(edge(rUser,'bottom'), svg);
+    let b = toSVG(edge(rEP,'top'), svg);
+    document.getElementById('w-user-ep').setAttribute('d', orthoPath(a,b,'vh'));
+    let l = midLabelPath(a,b);
+    document.getElementById('l-user-ep').setAttribute('x', l.x);
+    document.getElementById('l-user-ep').setAttribute('y', l.y);
+
+    // endpoint -> bucket (vertical)
+    a = toSVG(edge(rEP,'bottom'), svg);
+    b = toSVG(edge(rBucket,'top'), svg);
+    document.getElementById('w-ep-bucket').setAttribute('d', orthoPath(a,b,'vh'));
+    l = midLabelPath(a,b);
+    document.getElementById('l-ep-bucket').setAttribute('x', l.x);
+    document.getElementById('l-ep-bucket').setAttribute('y', l.y);
+
+    // bucket -> objects (horizontal)
+    a = toSVG(edge(rBucket,'right'), svg);
+    b = toSVG(edge(rObjects,'left'), svg);
+    document.getElementById('w-bucket-objects').setAttribute('d', orthoPath(a,b,'hv'));
+    l = midLabelPath(a,b);
+    document.getElementById('l-bucket-objects').setAttribute('x', l.x);
+    document.getElementById('l-bucket-objects').setAttribute('y', l.y - 4);
+
+    // policy -> bucket (horizontal, pontilhado leve via stroke-dasharray)
+    const wPol = document.getElementById('w-policy-bucket');
+    a = toSVG(edge(rPolicy,'left'), svg);
+    b = toSVG(edge(rBucket,'right'), svg);
+    wPol.setAttribute('d', orthoPath(a,b,'hv'));
+    wPol.setAttribute('stroke-dasharray','8 6');
+    l = midLabelPath(a,b);
+    document.getElementById('l-policy-bucket').setAttribute('x', l.x);
+    document.getElementById('l-policy-bucket').setAttribute('y', l.y - 4);
+
+    // admin -> bucket (diagonal mínima: horizontal + vertical)
+    a = toSVG(edge(rAdmin,'left'), svg);
+    b = toSVG(edge(rBucket,'right'), svg);
+    document.getElementById('w-admin-bucket').setAttribute('d', orthoPath(a,b,'hv'));
+    l = midLabelPath(a,b);
+    document.getElementById('l-admin-bucket').setAttribute('x', l.x);
+    document.getElementById('l-admin-bucket').setAttribute('y', l.y - 4);
+  }
+
+  addEventListener('load', draw);
+  addEventListener('resize', () => requestAnimationFrame(draw));
+</script>
+
+</body></html>
