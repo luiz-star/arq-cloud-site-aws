@@ -19,7 +19,7 @@ Exercitar os seguintes conceitos:
 ## Enunciado
 
 Neste laboratório, você aprenderá como publicar um site estático simples na AWS, usando apenas o serviço Amazon S3.
-O objetivo é criar uma página HTML personalizada, usando como plano de fundo a imagem da Faculdade XP Educação, onde o aluno poderá inserir o seu nome em destaque.
+O objetivo é criar uma página HTML personalizada, usando como plano de fundo uma imagem , onde o aluno poderá inserir o seu nome em destaque.
 Você vai praticar conceitos importantes de armazenamento, permissões e publicação de arquivos estáticos em nuvem.
 
 Sua organização está treinando novas equipes para hospedar páginas institucionais em nuvem de forma econômica, escalável e segura.
